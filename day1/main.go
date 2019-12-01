@@ -1,50 +1,35 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
-	"strconv"
+
+	"github.com/sshilin/aoc2019/utils"
 )
 
-func readInput() (input []int) {
-	inputFile, err := os.Open("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer inputFile.Close()
-	scanner := bufio.NewScanner(inputFile)
-	for scanner.Scan() {
-		i, err := strconv.Atoi(scanner.Text())
-		if err != nil {
-			log.Fatal(err)
-		}
-		input = append(input, i)
-	}
-	return
-}
-
-func part1() {
+func part1(input []int) int {
 	fuel := 0
-	for _, mass := range readInput() {
+	for _, mass := range input {
 		fuel += (mass / 3) - 2
 	}
-	fmt.Println("Part 1: ", fuel)
+	return fuel
 }
 
-func part2() {
+func part2(input []int) int {
 	fuel := 0
-	for _, mass := range readInput() {
+	for _, mass := range input {
 		for (mass/3)-2 > 0 {
 			mass = (mass / 3) - 2
 			fuel += mass
 		}
 	}
-	fmt.Println("Part 2: ", fuel)
+	return fuel
 }
 
 func main() {
-	part1() // 3404722
-	part2() // 5104215
+	if input, err := utils.ReadInts("input.txt"); err == nil {
+		fmt.Println("Part 1:", part1(input)) // 3404722
+		fmt.Println("Part 2:", part2(input)) // 5104215
+	} else {
+		fmt.Println(err)
+	}
 }

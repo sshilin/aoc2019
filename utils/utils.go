@@ -27,20 +27,25 @@ func ReadInts(file string) ([]int, error) {
 	return ints, nil
 }
 
-// ReadCSVInts read a single line csv file where each value is int
-func ReadCSVInts(file string) ([]int, error) {
-	ints := make([]int, 0)
+// ReadCSVFile reads all csv records in file
+func ReadCSVFile(file string) ([][]string, error) {
 	inputFile, err := os.Open(file)
 	if err != nil {
 		return nil, err
 	}
 	defer inputFile.Close()
 	r := csv.NewReader(inputFile)
-	record, err := r.Read()
+	return r.ReadAll()
+}
+
+// ReadCSVInts reads a single line csv file where each value is int
+func ReadCSVInts(file string) ([]int, error) {
+	ints := make([]int, 0)
+	records, err := ReadCSVFile(file)
 	if err != nil {
 		return nil, err
 	}
-	for _, val := range record {
+	for _, val := range records[0] {
 		i, err := strconv.Atoi(strings.TrimSpace(val))
 		if err != nil {
 			return nil, err

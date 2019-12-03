@@ -34,10 +34,12 @@ func (p program) run() {
 }
 
 func part1(p program) {
-	p[1] = 12
-	p[2] = 2
-	p.run()
-	fmt.Println("Part 1:", p[0]) // 2894520
+	tmp := make(program, len(p))
+	copy([]int(tmp), []int(p))
+	tmp[1] = 12
+	tmp[2] = 2
+	tmp.run()
+	fmt.Println("Part 1:", tmp[0]) // 2894520
 }
 
 func part2(p program) {
@@ -59,6 +61,7 @@ func part2(p program) {
 
 func main() {
 	if input, err := utils.ReadCSVInts("input.txt"); err == nil {
+		part1(input)
 		part2(input)
 	} else {
 		fmt.Println(err)

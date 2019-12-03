@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"encoding/csv"
 	"os"
 	"strconv"
 	"strings"
@@ -34,8 +33,14 @@ func ReadCSVFile(file string) ([][]string, error) {
 		return nil, err
 	}
 	defer inputFile.Close()
-	r := csv.NewReader(inputFile)
-	return r.ReadAll()
+	records := make([][]string, 0)
+	scanner := bufio.NewScanner(inputFile)
+	for scanner.Scan() {
+		record := strings.Split(scanner.Text(), ",")
+		records = append(records, record)
+	}
+
+	return records, nil
 }
 
 // ReadCSVInts reads a single line csv file where each value is int

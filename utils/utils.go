@@ -30,7 +30,6 @@ func ReadInts(file string) ([]int, error) {
 
 // ReadCSVFile reads all csv records in file
 func ReadCSVFile(file string) ([][]string, error) {
-	defer Duration(Track("ReadCSVFile"))
 	inputFile, err := os.Open(file)
 	if err != nil {
 		return nil, err

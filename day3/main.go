@@ -41,8 +41,7 @@ func createWire(turns []string) []point {
 	return wire
 }
 
-func intersection(wire1 []point, wire2 []point) []point {
-	defer utils.Duration(utils.Track("intersection"))
+func intersections(wire1 []point, wire2 []point) []point {
 	m := make(map[point]bool, len(wire1))
 	p := make([]point, 0, len(wire2))
 	for _, wire1Point := range wire1 {
@@ -58,12 +57,12 @@ func intersection(wire1 []point, wire2 []point) []point {
 }
 
 func distance(a point, b point) int {
-	return int(math.Abs(float64(a.x)-float64(b.x)) + math.Abs(float64(a.y)-float64(b.y)))
+	return int(math.Abs(float64(a.x-b.x)) + math.Abs(float64(a.y-b.y)))
 }
 
 func part1(wire1 []point, wire2 []point) {
 	minDistance := math.MaxInt64
-	for _, p := range intersection(wire1, wire2) {
+	for _, p := range intersections(wire1, wire2) {
 		if distance(point{0, 0}, p) < minDistance {
 			minDistance = distance(point{0, 0}, p)
 		}
@@ -73,28 +72,29 @@ func part1(wire1 []point, wire2 []point) {
 
 func part2(wire1 []point, wire2 []point) {
 	minSteps := math.MaxInt64
-	for _, p := range intersection(wire1, wire2) {
-		tmp := 0
+	for _, p := range intersections(wire1, wire2) {
+		steps := 0
 		for i, wire1Point := range wire1 {
 			if wire1Point == p {
-				tmp += i
+				steps += i
 				break
 			}
 		}
 		for i, wire2Point := range wire2 {
 			if wire2Point == p {
-				tmp += i
+				steps += i
 				break
 			}
 		}
-		if tmp < minSteps {
-			minSteps = tmp
+		if steps < minSteps {
+			minSteps = steps
 		}
 	}
 	fmt.Println("Part2:", minSteps)
 }
 
 func main() {
+	defer utils.Duration(utils.Track("main"))
 	if records, err := utils.ReadCSVFile("input.txt"); err == nil {
 		wire1 := createWire(records[0])
 		wire2 := createWire(records[1])

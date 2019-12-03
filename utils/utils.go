@@ -2,9 +2,11 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ReadInts reads a file where each line is an integer
@@ -28,6 +30,7 @@ func ReadInts(file string) ([]int, error) {
 
 // ReadCSVFile reads all csv records in file
 func ReadCSVFile(file string) ([][]string, error) {
+	defer Duration(Track("ReadCSVFile"))
 	inputFile, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -58,4 +61,12 @@ func ReadCSVInts(file string) ([]int, error) {
 		ints = append(ints, i)
 	}
 	return ints, nil
+}
+
+func Track(msg string) (string, time.Time) {
+	return msg, time.Now()
+}
+
+func Duration(msg string, start time.Time) {
+	fmt.Printf("%v: %vms\n", msg, time.Since(start).Milliseconds())
 }

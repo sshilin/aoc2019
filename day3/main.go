@@ -42,13 +42,16 @@ func createWire(turns []string) []point {
 }
 
 func intersection(wire1 []point, wire2 []point) []point {
-	zeroPoint := point{0, 0}
-	p := make([]point, 0)
+	defer utils.Duration(utils.Track("intersection"))
+	m := make(map[point]bool, len(wire1))
+	p := make([]point, 0, len(wire2))
 	for _, wire1Point := range wire1 {
-		for _, wire2Point := range wire2 {
-			if wire1Point == wire2Point && wire1Point != zeroPoint {
-				p = append(p, wire1Point)
-			}
+		m[wire1Point] = true
+	}
+	delete(m, point{0, 0})
+	for _, wire2Point := range wire2 {
+		if _, ok := m[wire2Point]; ok {
+			p = append(p, wire2Point)
 		}
 	}
 	return p
@@ -68,11 +71,35 @@ func part1(wire1 []point, wire2 []point) {
 	fmt.Println("Part1:", minDistance)
 }
 
+func part2(wire1 []point, wire2 []point) {
+	minSteps := math.MaxInt64
+	for _, p := range intersection(wire1, wire2) {
+		tmp := 0
+		for i, wire1Point := range wire1 {
+			if wire1Point == p {
+				tmp += i
+				break
+			}
+		}
+		for i, wire2Point := range wire2 {
+			if wire2Point == p {
+				tmp += i
+				break
+			}
+		}
+		if tmp < minSteps {
+			minSteps = tmp
+		}
+	}
+	fmt.Println("Part2:", minSteps)
+}
+
 func main() {
 	if records, err := utils.ReadCSVFile("input.txt"); err == nil {
 		wire1 := createWire(records[0])
 		wire2 := createWire(records[1])
 		part1(wire1, wire2) // 870
+		part2(wire1, wire2) // 13698
 	} else {
 		fmt.Println(err)
 	}

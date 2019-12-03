@@ -33,12 +33,33 @@ func (p program) run() {
 	}
 }
 
+func part1(p program) {
+	p[1] = 12
+	p[2] = 2
+	p.run()
+	fmt.Println("Part 1:", p[0]) // 2894520
+}
+
+func part2(p program) {
+	for noun := 0; noun <= 99; noun++ {
+		for verb := 0; verb <= 99; verb++ {
+			tmp := make(program, len(p))
+			copy([]int(tmp), []int(p))
+			tmp[1] = noun
+			tmp[2] = verb
+			tmp.run()
+			if tmp[0] == 19690720 {
+				fmt.Println("Part 2:", 100*noun+verb) // 9342
+				return
+			}
+		}
+	}
+	fmt.Println("not found")
+}
+
 func main() {
 	if input, err := utils.ReadCSVInts("input.txt"); err == nil {
-		input[1] = 12
-		input[2] = 2
-		program(input).run()
-		fmt.Println("Part 1:", input[0]) // 2894520
+		part2(input)
 	} else {
 		fmt.Println(err)
 	}

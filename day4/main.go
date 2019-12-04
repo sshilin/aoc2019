@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/sshilin/aoc2019/utils"
 )
 
 const (
@@ -15,9 +17,6 @@ func factor(number int) []int {
 		factors = append(factors, number%10)
 		number /= 10
 	}
-	for i, j := 0, len(factors)-1; i < j; i, j = i+1, j-1 {
-		factors[i], factors[j] = factors[j], factors[i]
-	}
 	return factors
 }
 
@@ -26,7 +25,7 @@ func checkP1(password int) bool {
 	test1 := true
 	test2 := false
 	for i := 0; i < len(p)-1; i++ {
-		if p[i] > p[i+1] {
+		if p[i] < p[i+1] {
 			test1 = false
 		}
 		if p[i] == p[i+1] {
@@ -41,7 +40,7 @@ func checkP2(password int) bool {
 	test1 := true
 	test2 := false
 	for i := 0; i < len(p)-1; i++ {
-		if p[i] > p[i+1] {
+		if p[i] < p[i+1] {
 			test1 = false
 		}
 		if (p[i] == p[i+1]) && (i == 0 || p[i-1] != p[i]) && (i == len(p)-2 || p[i+1] != p[i+2]) {
@@ -72,6 +71,7 @@ func part2() {
 }
 
 func main() {
+	defer utils.Duration(utils.Track("main"))
 	part1()
 	part2()
 }

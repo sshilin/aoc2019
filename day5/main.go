@@ -62,11 +62,86 @@ func (m memory) run() {
 			m.store(op1*op2, m[ip+2])
 			ip += 3
 		case 3: // opcode 3 - input
-			m.store(1, m[ip])
+			m.store(5, m[ip])
 			ip += 1
 		case 4: // opcode 3 - output
 			fmt.Println("=>", m[m[ip]])
 			ip += 1
+		case 5: // opcode 3 - jump-if-true
+			op1, op2 := 0, 0
+			if mop1 == 1 {
+				op1 = m[ip]
+			} else {
+				op1 = m.load(ip)
+			}
+			if mop2 == 1 {
+				op2 = m[ip+1]
+			} else {
+				op2 = m.load(ip + 1)
+			}
+
+			if op1 != 0 {
+				ip = op2
+			} else {
+				ip += 2
+			}
+		case 6: // opcode 3 - jump-if-false
+			op1, op2 := 0, 0
+			if mop1 == 1 {
+				op1 = m[ip]
+			} else {
+				op1 = m.load(ip)
+			}
+			if mop2 == 1 {
+				op2 = m[ip+1]
+			} else {
+				op2 = m.load(ip + 1)
+			}
+
+			if op1 == 0 {
+				ip = op2
+			} else {
+				ip += 2
+			}
+		case 7: // opcode 3 - less
+			op1, op2 := 0, 0
+			if mop1 == 1 {
+				op1 = m[ip]
+			} else {
+				op1 = m.load(ip)
+			}
+			if mop2 == 1 {
+				op2 = m[ip+1]
+			} else {
+				op2 = m.load(ip + 1)
+			}
+
+			if op1 < op2 {
+				m.store(1, m[ip+2])
+			} else {
+				m.store(0, m[ip+2])
+			}
+			ip += 3
+		case 8: // opcode 3 - equals
+			op1, op2 := 0, 0
+			if mop1 == 1 {
+				op1 = m[ip]
+			} else {
+				op1 = m.load(ip)
+			}
+			if mop2 == 1 {
+				op2 = m[ip+1]
+			} else {
+				op2 = m.load(ip + 1)
+			}
+
+			if op1 == op2 {
+				m.store(1, m[ip+2])
+			} else {
+				m.store(0, m[ip+2])
+			}
+			ip += 3
+
 		case 99: // opcode 99 - halt
 			halt = true
 		}

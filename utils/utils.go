@@ -28,6 +28,21 @@ func ReadInts(file string) ([]int, error) {
 	return ints, nil
 }
 
+// ReadStrings reads all lines
+func ReadStrings(file string) ([]string, error) {
+	strings := make([]string, 0)
+	inputFile, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	defer inputFile.Close()
+	scanner := bufio.NewScanner(inputFile)
+	for scanner.Scan() {
+		strings = append(strings, scanner.Text())
+	}
+	return strings, nil
+}
+
 // ReadCSVFile reads all csv records in file
 func ReadCSVFile(file string) ([][]string, error) {
 	inputFile, err := os.Open(file)

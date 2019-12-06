@@ -8,78 +8,71 @@ import (
 )
 
 type node struct {
-	id       string
+	object   string
 	orbiting string
 }
 
 func part1(input []string) {
 	graph := make(map[string]node)
-	for _, in := range input {
-		n := strings.Split(in, ")")
-		graph[n[1]] = node{n[1], n[0]}
+	for _, line := range input {
+		part := strings.Split(line, ")")
+		graph[part[1]] = node{part[1], part[0]}
 	}
-
 	count := 0
-	for _, node := range graph {
-		// fmt.Println(key, node)
-		tmp := node
+	for _, obj := range graph {
+		currentObj := obj
 		count++
-		for tmp.orbiting != "COM" {
-			// fmt.Println("==>", tmp)
-			tmp = graph[tmp.orbiting]
+		for currentObj.orbiting != "COM" {
+			currentObj = graph[currentObj.orbiting]
 			count++
 		}
 	}
-	fmt.Println(count)
-	// part1: 245089
+	fmt.Println("Part 1:", count) // 245089
 }
 
 func part2(input []string) {
 	graph := make(map[string]node)
-	// sanStart := ""
-	// youStart := ""
-	for _, in := range input {
-		n := strings.Split(in, ")")
-		graph[n[1]] = node{n[1], n[0]}
+	for _, line := range input {
+		part := strings.Split(line, ")")
+		graph[part[1]] = node{part[1], part[0]}
 	}
 
 	san2com := make(map[string]int)
 	you2com := make(map[string]int)
 
 	tmpSan := graph["SAN"]
-	countSan := 0
+	jump := 0
 	for tmpSan.orbiting != "COM" {
 		tmpSan = graph[tmpSan.orbiting]
-		san2com[tmpSan.id] = countSan
-		countSan++
+		san2com[tmpSan.object] = jump
+		jump++
 	}
-
-	fmt.Println(san2com)
 
 	tmpYou := graph["YOU"]
-	countYou := 0
+	jump = 0
 	for tmpYou.orbiting != "COM" {
 		tmpYou = graph[tmpYou.orbiting]
-		you2com[tmpYou.id] = countYou
-		countYou++
+		you2com[tmpYou.object] = jump
+		jump++
 	}
 
-	fmt.Println(you2com)
-
 	minDistance := len(graph)
-	for k, yv := range you2com {
-		if sv, ok := san2com[k]; ok {
-			if yv+sv < minDistance {
-				minDistance = yv + sv
+	for obj, youJumps := range you2com {
+		if sanJumps, ok := san2com[obj]; ok {
+			if distance := youJumps + sanJumps; distance < minDistance {
+				minDistance = distance
 			}
 		}
 	}
-	fmt.Println(minDistance) // 511
+
+	fmt.Println("Part 2:", minDistance) // 511
 }
 
 func main() {
-	input, _ := utils.ReadStrings("input.txt")
-
-	part2(input)
-
+	if input, err := utils.ReadStrings("input.txt"); err == nil {
+		part1(input)
+		part2(input)
+	} else {
+		fmt.Println(err)
+	}
 }

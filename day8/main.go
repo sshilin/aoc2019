@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
-	"os"
-	"strconv"
+
+	"github.com/sshilin/aoc2019/utils"
 )
 
 const (
@@ -13,56 +11,21 @@ const (
 	height = 6
 )
 
-func linear(x int, y int) int {
-	return width*y + x
-}
-
-func main() {
-	var layers [][]int
-
-	layers = append(layers, []int{})
-	currentLayer := 0
-
-	inputFile, _ := os.Open("input.txt")
-	defer inputFile.Close()
-	r := bufio.NewReader(inputFile)
-
-	i := -1
-	for {
-		i++
-		s, _, err := r.ReadRune()
-		if err == io.EOF {
-			break
-		}
-		digit, _ := strconv.Atoi(string(s))
-
-		if i%(width*height) == 0 && i > 0 {
-			layers = append(layers, []int{})
-			currentLayer++
-		}
-		layers[currentLayer] = append(layers[currentLayer], digit)
-	}
-
-	for _, l := range layers {
-		fmt.Println(len(l))
-	}
-
+func part1(layers [][]int) {
 	layerWithFewestZeros := 0
-	zeros := 99999
+	fewestZeros := width
 	for i, layer := range layers {
-		ld := 0
+		zeros := 0
 		for _, digit := range layer {
 			if digit == 0 {
-				ld++
+				zeros++
 			}
 		}
-		if ld < zeros {
-			zeros = ld
+		if zeros < fewestZeros {
+			fewestZeros = zeros
 			layerWithFewestZeros = i
 		}
 	}
-	fmt.Println("Layer with fewest zeros is", layerWithFewestZeros)
-
 	ones := 0
 	twos := 0
 	for _, digit := range layers[layerWithFewestZeros] {
@@ -74,7 +37,9 @@ func main() {
 		}
 	}
 	fmt.Println("Part1:", ones*twos) // 2286
+}
 
+func part2(layers [][]int) {
 	var message [height][width]int
 
 	for h := 0; h < height; h++ {
@@ -97,10 +62,11 @@ func main() {
 		}
 	}
 
+	fmt.Println("Part2:")
 	for h := 0; h < height; h++ {
 		for w := 0; w < width; w++ {
 			if message[h][w] == 1 {
-				fmt.Print(".")
+				fmt.Print("*")
 			} else {
 				fmt.Print(" ")
 			}
@@ -108,5 +74,23 @@ func main() {
 		}
 		fmt.Println("") // CJZLP
 	}
+}
 
+func main() {
+	if input, err := utils.ReadDigitsLine("input.txt"); err == nil {
+		var layers [][]int
+
+		layers = append(layers, []int{})
+		for i, digit := range input {
+			if i%(width*height) == 0 && i > 0 {
+				layers = append(layers, []int{})
+			}
+			layers[len(layers)-1] = append(layers[len(layers)-1], digit)
+		}
+
+		part1(layers)
+		part2(layers)
+	} else {
+		fmt.Println(err)
+	}
 }

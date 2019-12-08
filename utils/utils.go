@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -75,6 +76,29 @@ func ReadCSVInts(file string) ([]int, error) {
 		ints = append(ints, i)
 	}
 	return ints, nil
+}
+
+// ReadDigitsLine reads a single line of digits
+func ReadDigitsLine(file string) ([]int, error) {
+	digits := make([]int, 0)
+	inputFile, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	defer inputFile.Close()
+	reader := bufio.NewReader(inputFile)
+	for {
+		s, _, err := reader.ReadRune()
+		if err == io.EOF {
+			break
+		}
+		if digit, err := strconv.Atoi(string(s)); err == nil {
+			digits = append(digits, digit)
+		} else {
+			return nil, err
+		}
+	}
+	return digits, nil
 }
 
 func Track(msg string) (string, time.Time) {

@@ -131,52 +131,41 @@ type point struct {
 	x, y int
 }
 
-func part1(input []int) {
+func draw(input []int, initColor int) map[point]int {
 	path := map[point]int{}
 	pos := point{0, 0}
 	dir := "up"
 	// path[pos] = 0
 	ic := createIntcode(input)
-	ic.in <- 0
+	ic.in <- initColor
 	for !ic.halt {
 		ic.run()
-		color := <-ic.out
-		direction := <-ic.out
-		if direction == 0 { // left 90 degrees
+		path[pos] = <-ic.out
+		if direction := <-ic.out; direction == 0 { // left 90 degrees
 			if dir == "up" {
-				path[pos] = color
 				dir = "left"
 				pos = point{pos.x - 1, pos.y}
 			} else if dir == "left" {
-				path[pos] = color
 				dir = "down"
 				pos = point{pos.x, pos.y + 1}
 			} else if dir == "down" {
-				path[pos] = color
 				dir = "right"
 				pos = point{pos.x + 1, pos.y}
 			} else if dir == "right" {
-				path[pos] = color
 				dir = "up"
 				pos = point{pos.x, pos.y - 1}
 			}
-		}
-
-		if direction == 1 { // right 90 degrees
+		} else { // right 90 degrees
 			if dir == "up" {
-				path[pos] = color
 				dir = "right"
 				pos = point{pos.x + 1, pos.y}
 			} else if dir == "right" {
-				path[pos] = color
 				dir = "down"
 				pos = point{pos.x, pos.y + 1}
 			} else if dir == "down" {
-				path[pos] = color
 				dir = "left"
 				pos = point{pos.x - 1, pos.y}
 			} else if dir == "left" {
-				path[pos] = color
 				dir = "up"
 				pos = point{pos.x, pos.y - 1}
 			}
@@ -188,76 +177,22 @@ func part1(input []int) {
 			ic.in <- 0
 		}
 	}
-	fmt.Println("Part1:", len(path)) // 2160
+	return path
+}
+
+func part1(input []int) {
+	fmt.Println("Part1:", len(draw(input, 0))) // 2160
 }
 
 func part2(input []int) {
-	path := map[point]int{}
-	pos := point{0, 0}
-	dir := "up"
-	// path[pos] = 0
-	ic := createIntcode(input)
-	ic.in <- 1
-	for !ic.halt {
-		ic.run()
-		color := <-ic.out
-		direction := <-ic.out
-		if direction == 0 { // left 90 degrees
-			if dir == "up" {
-				path[pos] = color
-				dir = "left"
-				pos = point{pos.x - 1, pos.y}
-			} else if dir == "left" {
-				path[pos] = color
-				dir = "down"
-				pos = point{pos.x, pos.y + 1}
-			} else if dir == "down" {
-				path[pos] = color
-				dir = "right"
-				pos = point{pos.x + 1, pos.y}
-			} else if dir == "right" {
-				path[pos] = color
-				dir = "up"
-				pos = point{pos.x, pos.y - 1}
-			}
-		}
-
-		if direction == 1 { // right 90 degrees
-			if dir == "up" {
-				path[pos] = color
-				dir = "right"
-				pos = point{pos.x + 1, pos.y}
-			} else if dir == "right" {
-				path[pos] = color
-				dir = "down"
-				pos = point{pos.x, pos.y + 1}
-			} else if dir == "down" {
-				path[pos] = color
-				dir = "left"
-				pos = point{pos.x - 1, pos.y}
-			} else if dir == "left" {
-				path[pos] = color
-				dir = "up"
-				pos = point{pos.x, pos.y - 1}
-			}
-		}
-
-		if color, ok := path[pos]; ok {
-			ic.in <- color
-		} else {
-			ic.in <- 0
-		}
+	var hull [10][50]int
+	for point, color := range draw(input, 1) {
+		hull[point.y][point.x] = color
 	}
-	fmt.Println("Part1:", len(path)) // 2160
-
-	var field [50][50]int
-	for p, c := range path {
-		field[p.y][p.x] = c
-	}
-
-	for h := 0; h < 50; h++ {
-		for w := 0; w < 50; w++ {
-			if field[h][w] == 0 {
+	fmt.Println("Part2:")
+	for h := 0; h < len(hull); h++ {
+		for w := 0; w < len(hull[0]); w++ {
+			if hull[h][w] == 0 {
 				fmt.Print(".")
 			} else {
 				fmt.Print("#")
@@ -269,6 +204,7 @@ func part2(input []int) {
 
 func main() {
 	if input, err := utils.ReadCSVInts("input.txt"); err == nil {
+		part1(input)
 		part2(input)
 	} else {
 		fmt.Println(err)

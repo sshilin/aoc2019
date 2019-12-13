@@ -173,7 +173,7 @@ func part2(input []int) {
 	paddle := 0
 	score := 0
 
-	field := [24][44]string{}
+	field := [50][50]string{}
 
 	for !ic.halt {
 		ic.run()
@@ -183,37 +183,40 @@ func part2(input []int) {
 			id := <-ic.out
 
 			if x == -1 && y == 0 {
-				fmt.Println("Score", id)
+				fmt.Println("SCORE")
 				if id > score {
 					score = id
 				}
 			} else {
 				switch id {
 				case 0:
+					fmt.Println("empty", x, y)
 					field[y][x] = " "
 				case 1:
+					fmt.Println("wall", x, y)
 					field[y][x] = "."
 				case 2:
+					fmt.Println("brick", x, y)
 					field[y][x] = "="
 				case 3:
 					field[y][x] = "_"
+					fmt.Println("paddle", x, y)
 					paddle = x
 				case 4:
-					field[x][y] = "x"
+					fmt.Println("ball", x, y)
+					field[y][x] = "o"
 					ball = x
-					fmt.Println("Ball", x, y)
 				}
 			}
 		} else if ic.interrupt == 1 {
 
-			for y := 0; y < 24; y++ {
-				for x := 0; x < 44; x++ {
-					fmt.Print(field[y][x])
-				}
-				fmt.Println("")
-			}
-			// field = [24][44]string{}
-
+			// for y := 0; y < 50; y++ {
+			// 	for x := 0; x < 50; x++ {
+			// 		fmt.Print(field[y][x])
+			// 	}
+			// 	fmt.Println("")
+			// }
+			fmt.Println("=========================================")
 			if ball > paddle {
 				fmt.Println("RIGHT")
 				ic.in <- 1

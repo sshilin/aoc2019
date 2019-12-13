@@ -101,6 +101,16 @@ func ReadDigitsLine(file string) ([]int, error) {
 	return digits, nil
 }
 
+// Copy2dInt makes a copy of two dimentional int slice
+func Copy2dInt(dst [][]int, src [][]int) int {
+	copied := 0
+	for i := range src {
+		dst[i] = make([]int, len(src[i]))
+		copied += copy(dst[i], src[i])
+	}
+	return copied
+}
+
 func Track(msg string) (string, time.Time) {
 	return msg, time.Now()
 }
